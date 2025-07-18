@@ -2,9 +2,9 @@ package cmd
 
 import (
     "fmt"
-    "log"
     "ai/config"
     "ai/openai"
+    "ai/logger"
     "github.com/urfave/cli/v2"
 )
 
@@ -12,17 +12,17 @@ func Load(cfg config.Config, client *openai.Client) []*cli.Command {
     var cmds []*cli.Command
 
     if client == nil {
-        log.Println("OpenAI client is not initialized")
+        logger.Warnf("OpenAI client is not initialized")
         return cmds
     }
 
     if len(cfg.Commands) == 0 {
-        log.Println("No commands found in configuration")
+        logger.Warnf("No commands found in configuration")
     }
 
     for mainCmd, sub := range cfg.Commands {
         if len(sub) == 0 {
-            log.Printf("No subcommands found for main command '%s'", mainCmd)
+            logger.Warnf("No subcommands found for main command '%s'", mainCmd)
         }
         main := &cli.Command{
             Name:        mainCmd,
@@ -32,7 +32,7 @@ func Load(cfg config.Config, client *openai.Client) []*cli.Command {
         for subCmd, ctx := range sub {
             promptText := ctx.SystemPrompt
             if promptText == "" {
-                log.Printf("System prompt is empty for %s/%s", mainCmd, subCmd)
+                logger.Warnf("System prompt is empty for %s/%s", mainCmd, subCmd)
             }
             // Capture variables for closure
             capturedMainCmd := mainCmd
@@ -43,15 +43,15 @@ func Load(cfg config.Config, client *openai.Client) []*cli.Command {
                 Name:  capturedSubCmd,
                 Usage: capturedPromptText,
                 Action: func(c *cli.Context) error {
-                    log.Printf("Running command: %s/%s", capturedMainCmd, capturedSubCmd)
+                    logger.Infof("Running command: %s/%s", capturedMainCmd, capturedSubCmd)
                     if capturedPromptText == "" {
-                        log.Printf("No prompt text provided for %s/%s", capturedMainCmd, capturedSubCmd)
+                        logger.Warnf("No prompt text provided for %s/%s", capturedMainCmd, capturedSubCmd)
                         return fmt.Errorf("no prompt text provided for %s/%s", capturedMainCmd, capturedSubCmd)
                     }
                     fmt.Printf("📝 %s\n", capturedPromptText)
                     err := client.AskStream(capturedPromptText)
                     if err != nil {
-                        log.Printf("Error from OpenAI client: %v", err)
+                        logger.Infof("Error from OpenAI client: %v", err)
                         fmt.Println("------")
                         return err
                     }
