@@ -1,4 +1,6 @@
 ai 
+config.yaml
+*.yaml 
 
 # Binaries for programs and plugins
 *.exe
