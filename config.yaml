@@ -1,0 +1,15 @@
+openai_api_key: "sk-xxx"
+model: "gpt-4"
+base_url: "https://api.openai.com/v1"
+
+commands:
+  devops:
+    ci_cd_expert:
+      system_prompt: "Explain CI/CD with practical examples."
+    terraform_guru:
+      system_prompt: "Explain how remote backends work in Terraform."
+  kubernetes:
+    architect:
+      system_prompt: "How does the Kubernetes HPA controller work?"
+    security:
+      system_prompt: "How do Kubernetes NetworkPolicies isolate traffic?"
