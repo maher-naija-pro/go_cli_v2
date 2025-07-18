@@ -23,7 +23,8 @@ A flexible CLI for running prompts against any OpenAI-compatible API endpoint, o
 
 ## Configuration
 
-The CLI uses a `config.yaml` file to define prompts and OpenAI settings. You can generate a template with:
+
+The CLI uses a `config.yaml` file to define prompts and OpenAI settings. By default, it looks for the config at `~/.ai/config.yaml`. You can generate a template with:
 
 ```sh
 ./ai init

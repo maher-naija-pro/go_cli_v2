@@ -12,7 +12,12 @@ import (
 func main() {
     configPath := os.Getenv("AI_CONFIG_PATH")
     if configPath == "" {
-        configPath = "config.yaml"
+        // Default to ~/.ai/config.yaml if AI_CONFIG_PATH is not set
+        home, err := os.UserHomeDir()
+        if err != nil {
+            log.Fatalf("Failed to get user home directory: %v", err)
+        }
+        configPath = home + string(os.PathSeparator) + ".ai" + string(os.PathSeparator) + "config.yaml"
         log.Printf("AI_CONFIG_PATH not set, using default: %s", configPath)
     } else {
         log.Printf("Using config path from AI_CONFIG_PATH: %s", configPath)
