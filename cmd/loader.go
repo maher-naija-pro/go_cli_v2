@@ -55,7 +55,7 @@ func Load(cfg config.Config, client *openai.Client) []*cli.Command {
 						fmt.Printf("Usage: %s %s <your prompt>\n", capturedMainCmd, capturedSubCmd)
 						return fmt.Errorf("no user prompt provided for %s/%s", capturedMainCmd, capturedSubCmd)
 					}
-					fmt.Printf("📝 %s\n", capturedPromptText)
+				
 					err := client.AskStream(capturedPromptText, userPrompt)
 					if err != nil {
 						logger.Infof("Error from OpenAI client: %v", err)
