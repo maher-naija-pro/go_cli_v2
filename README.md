@@ -35,6 +35,7 @@ The CLI uses a `config.yaml` file to define prompts and OpenAI settings. By defa
 openai_api_key: "sk-..." # Your OpenAI API key
 model: "gpt-4"
 base_url: "https://api.openai.com/v1"
+log_level: "INFO" # Log level: DEBUG, INFO, WARN, ERROR, FATAL
 
 commands:
   devops:
@@ -52,6 +53,7 @@ commands:
 - `openai_api_key`: Your OpenAI API key (can also be set via the `OPENAI_API_KEY` environment variable)
 - `model`: OpenAI model to use (e.g., `gpt-4`, `gpt-3.5-turbo`)
 - `base_url`: API endpoint (default: `https://api.openai.com/v1`)
+- `log_level`: Log verbosity (DEBUG, INFO, WARN, ERROR, FATAL; default: INFO; can also be set via `LOG_LEVEL` environment variable)
 - `commands`: Hierarchical structure for organizing prompts
 
 ## Usage
@@ -81,6 +83,7 @@ commands:
 | `OPENAI_API_KEY`   | Overrides the `openai_api_key` in config.yaml       | `sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxx`    |
 | `OPENAI_MODEL`     | Overrides the `model` in config.yaml                | `gpt-4`                              |
 | `OPENAI_BASE_URL`  | Overrides the `base_url` in config.yaml             | `https://api.openai.com/v1`          |
+| `LOG_LEVEL`        | Overrides the `log_level` in config.yaml                | `DEBUG`                               |
 
 ## Dependencies
 - Go 1.21+

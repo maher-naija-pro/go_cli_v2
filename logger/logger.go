@@ -6,6 +6,7 @@ import (
     "log"
     "os"
     "runtime"
+    "strings"
     "sync"
     "time"
 )
@@ -117,3 +118,20 @@ func Infof(format string, v ...interface{})  { logf(INFO, format, v...) }
 func Warnf(format string, v ...interface{})  { logf(WARN, format, v...) }
 func Errorf(format string, v ...interface{}) { logf(ERROR, format, v...) }
 func Fatalf(format string, v ...interface{}) { logf(FATAL, format, v...) }
+
+func ParseLogLevel(s string) (LogLevel, error) {
+    switch strings.ToUpper(s) {
+    case "DEBUG":
+        return DEBUG, nil
+    case "INFO":
+        return INFO, nil
+    case "WARN", "WARNING":
+        return WARN, nil
+    case "ERROR":
+        return ERROR, nil
+    case "FATAL":
+        return FATAL, nil
+    default:
+        return INFO, fmt.Errorf("unknown log level: %s", s)
+    }
+}
