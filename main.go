@@ -15,7 +15,7 @@ func main() {
         // Default to ~/.ai/config.yaml if AI_CONFIG_PATH is not set
         home, err := os.UserHomeDir()
         if err != nil {
-            log.Fatalf("Failed to get user home directory: %v", err)
+            log.Printf("Failed to get user home directory: %v", err)
         }
         configPath = home + string(os.PathSeparator) + ".ai" + string(os.PathSeparator) + "config.yaml"
         log.Printf("AI_CONFIG_PATH not set, using default: %s", configPath)
@@ -25,13 +25,14 @@ func main() {
 
     // Check if config file exists
     if _, err := os.Stat(configPath); os.IsNotExist(err) {
-        log.Fatalf("Config file not found at path: %s", configPath)
+        log.Printf("Config file not found at path: %s", configPath)
     }
+
 
     cfg := config.Load(configPath)
     client := openai.New(cfg.OpenAIAPIKey, cfg.Model, cfg.BaseURL)
     if client == nil {
-        log.Fatal("Failed to initialize OpenAI client. Exiting.")
+        log.Printf("Failed to initialize OpenAI client. Exiting.")
     }
 
     commands := cmd.Load(cfg, client)

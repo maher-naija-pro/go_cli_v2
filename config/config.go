@@ -24,28 +24,19 @@ type Config struct {
 func Load(path string) Config {
     var cfg Config
 
-    // Check if file exists
-    fileInfo, err := os.Stat(path)
-    if err != nil {
-        if os.IsNotExist(err) {
-            log.Fatalf("Config file not found: %s", path)
-        } else {
-            log.Fatalf("Error checking config file: %v", err)
-        }
-    }
-    if fileInfo.IsDir() {
-        log.Fatalf("Config path is a directory, not a file: %s", path)
-    }
+
 
     // Read file
     data, err := os.ReadFile(path)
     if err != nil {
-        log.Fatalf("Failed to read config file: %v", err)
+        log.Printf("Failed to read config file: %v", err)
+        
     }
 
     // Parse YAML
     if err := yaml.Unmarshal(data, &cfg); err != nil {
-        log.Fatalf("Failed to parse YAML config: %v", err)
+        log.Printf("Failed to parse YAML config: %v", err)
+        
     }
 
     // Environment variable overrides
@@ -64,7 +55,8 @@ func Load(path string) Config {
 
     // Validation and defaults
     if cfg.OpenAIAPIKey == "" {
-        log.Fatal("OPENAI_API_KEY is required but not set in config or environment")
+        log.Printf("OPENAI_API_KEY is required but not set in config or environment")
+        
     }
     if cfg.Model == "" {
         log.Printf("Model not set, defaulting to gpt-3.5-turbo")
@@ -102,8 +94,19 @@ func WriteDefault(path string) error {
         Model:        "gpt-3.5-turbo",
         BaseURL:      "https://api.openai.com/v1",
         Commands: map[string]map[string]Context{
-            "example": {
-                "hello": {SystemPrompt: "Say hello in a fun way."},
+            "dev": {
+                "logs":     {SystemPrompt: "Explain how to view and interpret application logs."},
+                "explain":  {SystemPrompt: "Explain what this code or command does."},
+                "cmd":      {SystemPrompt: "Generate a shell command for the described task."},
+                "generate": {SystemPrompt: "Generate code or configuration for the described requirement."},
+                "debug":    {SystemPrompt: "Suggest debugging steps for the described issue."},
+                "review":   {SystemPrompt: "Review the following code for bugs and improvements."},
+            },
+            "kubernetes": {
+                "troubleshoot": {SystemPrompt: "Troubleshoot the described Kubernetes issue."},
+            },
+            "ai": {
+                "prompt_engineer": {SystemPrompt: "Suggest improvements to the following prompt."},
             },
         },
     }
