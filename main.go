@@ -11,31 +11,34 @@ import (
 )
 
 func main() {
+	logger.InitLogger(os.Stderr, logger.ERROR)
 	configPath := os.Getenv("AI_CONFIG_PATH")
 	if configPath == "" {
 		// Default to ~/.ai/config.yaml if AI_CONFIG_PATH is not set
 		home, err := os.UserHomeDir()
 		if err != nil {
-			logger.Infof("Failed to get user home directory: %v", err)
+			logger.Errorf("Failed to get user home directory: %v", err)
 		}
 		configPath = home + string(os.PathSeparator) + ".ai" + string(os.PathSeparator) + "config.yaml"
-		logger.Infof("AI_CONFIG_PATH not set, using default: %s", configPath)
+		logger.Debugf("AI_CONFIG_PATH not set, using default: %s", configPath)
 	} else {
-		logger.Infof("Using config path from AI_CONFIG_PATH: %s", configPath)
+		logger.Debugf("Using config path from AI_CONFIG_PATH: %s", configPath)
 	}
 
 	// Check if config file exists
 	if _, err := os.Stat(configPath); os.IsNotExist(err) {
-		logger.Warnf("Config file not found at path: %s", configPath)
+		logger.Errorf("Config file not found at path: %s", configPath)
 	}
 
 	cfg := config.Load(configPath)
 	lvl, err := logger.ParseLogLevel(cfg.LogLevel)
 	if err != nil {
-		logger.Warnf("Invalid log level '%s', defaulting to INFO", cfg.LogLevel)
+		logger.Errorf("Invalid log level '%s', defaulting to INFO", cfg.LogLevel)
 		lvl = logger.INFO
 	}
-	logger.InitLogger(os.Stderr, lvl)
+
+
+	logger.SetLogLevel(lvl)
 	client := openai.New(cfg.OpenAIAPIKey, cfg.Model, cfg.BaseURL)
 	if client == nil {
 		logger.Infof("Failed to initialize OpenAI client. Exiting.")

@@ -23,7 +23,7 @@ const (
 
 var (
     logger   *log.Logger
-    logLevel LogLevel = INFO
+    logLevel LogLevel 
     once     sync.Once
     mu       sync.Mutex
 )
@@ -47,10 +47,10 @@ func (l LogLevel) String() string {
 }
 
 // InitLogger initializes the logger with the given output and log level.
-func InitLogger(out io.Writer, level LogLevel) {
+func InitLogger(out io.Writer, levele LogLevel) {
     once.Do(func() {
         logger = log.New(out, "", 0)
-        logLevel = level
+        logLevel = levele
     })
 }
 
@@ -85,6 +85,8 @@ func logf(level LogLevel, format string, v ...interface{}) {
     now := time.Now().Format("2006-01-02 15:04:05")
     pc, file, line, ok := runtime.Caller(3)
     var caller string
+
+
     if ok {
         fn := runtime.FuncForPC(pc)
         if fn != nil {
