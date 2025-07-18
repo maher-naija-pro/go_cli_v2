@@ -3,8 +3,8 @@ package config
 import (
     "errors"
     "fmt"
-    "log"
     "os"
+    "ai/logger"
     "gopkg.in/yaml.v3"
 )
 
@@ -24,61 +24,56 @@ type Config struct {
 func Load(path string) Config {
     var cfg Config
 
-
-
     // Read file
     data, err := os.ReadFile(path)
     if err != nil {
-        log.Printf("Failed to read config file: %v", err)
-        
+        logger.Warnf("Failed to read config file: %v", err)
     }
 
     // Parse YAML
     if err := yaml.Unmarshal(data, &cfg); err != nil {
-        log.Printf("Failed to parse YAML config: %v", err)
-        
+        logger.Warnf("Failed to parse YAML config: %v", err)
     }
 
     // Environment variable overrides
     if v := os.Getenv("OPENAI_API_KEY"); v != "" {
-        log.Printf("Overriding openai_api_key from environment variable")
+        logger.Infof("Overriding openai_api_key from environment variable")
         cfg.OpenAIAPIKey = v
     }
     if v := os.Getenv("OPENAI_MODEL"); v != "" {
-        log.Printf("Overriding model from environment variable")
+        logger.Infof("Overriding model from environment variable")
         cfg.Model = v
     }
     if v := os.Getenv("OPENAI_BASE_URL"); v != "" {
-        log.Printf("Overriding base_url from environment variable")
+        logger.Infof("Overriding base_url from environment variable")
         cfg.BaseURL = v
     }
 
     // Validation and defaults
     if cfg.OpenAIAPIKey == "" {
-        log.Printf("OPENAI_API_KEY is required but not set in config or environment")
-        
+        logger.Warnf("OPENAI_API_KEY is required but not set in config or environment")
     }
     if cfg.Model == "" {
-        log.Printf("Model not set, defaulting to gpt-3.5-turbo")
+        logger.Infof("Model not set, defaulting to gpt-3.5-turbo")
         cfg.Model = "gpt-3.5-turbo"
     }
     if cfg.BaseURL == "" {
-        log.Printf("Base URL not set, defaulting to https://api.openai.com/v1")
+        logger.Infof("Base URL not set, defaulting to https://api.openai.com/v1")
         cfg.BaseURL = "https://api.openai.com/v1"
     }
     if cfg.Commands == nil {
-        log.Printf("No commands found in configuration")
+        logger.Warnf("No commands found in configuration")
         cfg.Commands = make(map[string]map[string]Context)
     }
     // Validate commands structure
     for mainCmd, subCmds := range cfg.Commands {
         if subCmds == nil {
-            log.Printf("Main command '%s' has no subcommands", mainCmd)
+            logger.Warnf("Main command '%s' has no subcommands", mainCmd)
             continue
         }
         for subCmd, ctx := range subCmds {
             if ctx.SystemPrompt == "" {
-                log.Printf("Warning: system_prompt is empty for command '%s/%s'", mainCmd, subCmd)
+                logger.Warnf("Warning: system_prompt is empty for command '%s/%s'", mainCmd, subCmd)
             }
         }
     }
@@ -112,24 +107,24 @@ func WriteDefault(path string) error {
     }
     out, err := yaml.Marshal(cfg)
     if err != nil {
-        log.Printf("Failed to marshal default config: %v", err)
+        logger.Infof("Failed to marshal default config: %v", err)
         return err
     }
 
     // Check if file already exists
     if _, err := os.Stat(path); err == nil {
-        log.Printf("Config file already exists at %s, not overwriting", path)
+        logger.Warnf("Config file already exists at %s, not overwriting", path)
         return errors.New(fmt.Sprintf("config file already exists at %s", path))
     } else if !os.IsNotExist(err) {
-        log.Printf("Error checking config file: %v", err)
+        logger.Infof("Error checking config file: %v", err)
         return err
     }
 
     err = os.WriteFile(path, out, 0644)
     if err != nil {
-        log.Printf("Failed to write default config: %v", err)
+        logger.Infof("Failed to write default config: %v", err)
         return err
     }
-    log.Printf("Default config written to %s", path)
+    logger.Infof("Default config written to %s", path)
     return nil
 }
