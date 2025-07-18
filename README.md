@@ -73,9 +73,13 @@ commands:
 ```
 
 ## Environment Variables
-- `OPENAI_API_KEY`: Overrides the API key in config.yaml
-- `OPENAI_MODEL`: Overrides the model in config.yaml
-- `OPENAI_BASE_URL`: Overrides the base_url in config.yaml
+
+| Variable           | Description                                         | Example Value                        |
+|--------------------|-----------------------------------------------------|--------------------------------------|
+| `AI_CONFIG_PATH`   | Path to the config file (defaults to `config.yaml`) | `/home/user/myconfig.yaml`           |
+| `OPENAI_API_KEY`   | Overrides the `openai_api_key` in config.yaml       | `sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxx`    |
+| `OPENAI_MODEL`     | Overrides the `model` in config.yaml                | `gpt-4`                              |
+| `OPENAI_BASE_URL`  | Overrides the `base_url` in config.yaml             | `https://api.openai.com/v1`          |
 
 ## Dependencies
 - Go 1.21+
